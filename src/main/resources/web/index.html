@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildStock | Construction Material Management</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">BM</div><div><strong>BuildStock</strong><span>Material Management</span></div></div>
+    <nav class="side-nav" aria-label="Main navigation">
+      <a class="nav-item active" href="#dashboard" data-view="dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+      <a class="nav-item" href="#register-material" data-view="register-material"><span class="nav-icon">＋</span><span>Register Material</span></a>
+      <a class="nav-item" href="#register-supplier" data-view="register-supplier"><span class="nav-icon">♙</span><span>Register Supplier</span></a>
+      <a class="nav-item" href="#record-purchase" data-view="record-purchase"><span class="nav-icon">↑</span><span>Record Purchase</span></a>
+      <a class="nav-item" href="#record-usage" data-view="record-usage"><span class="nav-icon">↓</span><span>Record Material Usage</span></a>
+    </nav>
+    <div class="sidebar-bottom"><div class="system-card"><span class="system-dot"></span><div><strong>System online</strong><small>Connected to MySQL</small></div></div></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div><p class="eyebrow" id="pageEyebrow">CONSTRUCTION OPERATIONS</p><h1 id="pageTitle">Dashboard</h1><p class="subtitle" id="pageSubtitle">Monitor material availability and stock alerts from one place.</p></div>
+      <button class="refresh-btn" onclick="loadData()"><span>↻</span> Refresh</button>
+    </header>
+    <main class="content">
+      <section id="view-dashboard" class="view active-view">
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-icon blue">▦</div><div><span>Total Materials</span><strong id="materialCount">0</strong><small>Registered material types</small></div></article>
+          <article class="stat-card"><div class="stat-icon green">♙</div><div><span>Total Suppliers</span><strong id="supplierCount">0</strong><small>Registered suppliers</small></div></article>
+          <article class="stat-card alert-card"><div class="stat-icon orange">!</div><div><span>Low Stock</span><strong id="lowStockCount">0</strong><small>Below minimum level</small></div></article>
+          <article class="stat-card"><div class="stat-icon purple">✓</div><div><span>Available Materials</span><strong id="inStockCount">0</strong><small>Materials with stock</small></div></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel availability-panel">
+            <div class="panel-heading"><div><p class="eyebrow">LIVE INVENTORY STATUS</p><h2>Material Availability</h2><p class="panel-description">Current stock and minimum levels from MySQL.</p></div><span class="live-pill">● Live</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Material</th><th>Category</th><th>Available</th><th>Minimum</th><th>Status</th></tr></thead><tbody id="availabilityTable"></tbody></table></div>
+          </article>
+          <article class="panel alert-panel">
+            <div class="panel-heading"><div><p class="eyebrow">ATTENTION</p><h2>Low Stock Alerts</h2></div><span class="count-pill" id="lowStockPill">0 alerts</span></div>
+            <p class="alert-note">Materials are flagged when available quantity is below the minimum stock level.</p>
+            <div id="lowStockList" class="alert-list"></div>
+          </article>
+        </div>
+        <article class="panel status-note"><div class="status-note-icon">✓</div><div><p class="eyebrow">STOCK MONITORING</p><h2>Keep your construction inventory under control</h2><p>Use the separate operation pages to add materials, register suppliers, record purchases and record material usage. The dashboard automatically reflects every stock change.</p></div></article>
+      </section>
+
+      <section id="view-register-material" class="view form-view">
+        <div class="page-section-heading"><p class="eyebrow">MATERIAL MASTER</p><h2>Register Material</h2><p>Add a new construction material to the inventory database.</p></div>
+        <article class="panel form-panel form-panel-wide"><div class="form-title"><span class="form-icon blue">＋</span><div><h2>Material Details</h2><p>Enter the opening quantity and minimum stock level.</p></div></div>
+          <form id="materialForm">
+            <div class="field-grid"><label>Material Name<input name="name" placeholder="e.g. Cement" required></label><label>Category<input name="category" placeholder="e.g. Building Material" required></label></div>
+            <div class="field-grid"><label>Unit<input name="unit" placeholder="bags / kg / pieces" required></label><label>Opening Quantity<input name="quantity" type="number" min="0" step="0.01" value="0" required></label></div>
+            <label>Minimum Stock<input name="minimumStock" type="number" min="0" step="0.01" value="0" required></label>
+            <button type="submit" class="primary-btn">Add Material</button>
+          </form>
+        </article>
+      </section>
+
+      <section id="view-register-supplier" class="view form-view">
+        <div class="page-section-heading"><p class="eyebrow">SUPPLIER MASTER</p><h2>Register Supplier</h2><p>Save supplier contact information for future purchases.</p></div>
+        <article class="panel form-panel form-panel-wide"><div class="form-title"><span class="form-icon green">♙</span><div><h2>Supplier Details</h2><p>Enter the supplier's basic contact information.</p></div></div>
+          <form id="supplierForm">
+            <label>Supplier Name<input name="name" placeholder="Supplier name" required></label>
+            <div class="field-grid"><label>Phone<input name="phone" placeholder="Phone number"></label><label>Email<input name="email" type="email" placeholder="supplier@email.com"></label></div>
+            <label>Address<textarea name="address" placeholder="Supplier address"></textarea></label>
+            <button type="submit" class="primary-btn green-btn">Add Supplier</button>
+          </form>
+        </article>
+      </section>
+
+      <section id="view-record-purchase" class="view form-view">
+        <div class="page-section-heading"><p class="eyebrow">STOCK IN</p><h2>Record Purchase</h2><p>Record materials received from a supplier. The available stock will increase automatically.</p></div>
+        <article class="panel form-panel form-panel-wide"><div class="form-title"><span class="form-icon purple">↑</span><div><h2>Purchase Details</h2><p>Select a material and supplier, then enter quantity and price.</p></div></div>
+          <form id="purchaseForm">
+            <label>Material<select name="materialId" id="purchaseMaterial" required></select></label>
+            <label>Supplier<select name="supplierId" id="purchaseSupplier" required></select></label>
+            <div class="field-grid"><label>Quantity<input name="quantity" type="number" min="0.01" step="0.01" required></label><label>Unit Price<input name="unitPrice" type="number" min="0" step="0.01" required></label></div>
+            <label>Purchase Date<input name="purchaseDate" type="date" required></label>
+            <button type="submit" class="primary-btn purple-btn">Record Purchase</button>
+          </form>
+        </article>
+        <div class="info-strip purple-strip"><strong>Stock update:</strong> Every successful purchase adds the purchased quantity to the selected material's available stock.</div>
+      </section>
+
+      <section id="view-record-usage" class="view form-view">
+        <div class="page-section-heading"><p class="eyebrow">STOCK OUT</p><h2>Record Material Usage</h2><p>Record materials consumed at a construction project. Available stock will decrease automatically.</p></div>
+        <article class="panel form-panel form-panel-wide"><div class="form-title"><span class="form-icon orange">↓</span><div><h2>Usage Details</h2><p>Enter the material, quantity used and construction project.</p></div></div>
+          <form id="usageForm">
+            <label>Material<select name="materialId" id="usageMaterial" required></select></label>
+            <div class="field-grid"><label>Quantity Used<input name="quantityUsed" type="number" min="0.01" step="0.01" required></label><label>Usage Date<input name="usageDate" type="date" required></label></div>
+            <label>Project / Site<input name="projectName" placeholder="e.g. Apartment Block A" required></label>
+            <button type="submit" class="primary-btn orange-btn">Record Material Usage</button>
+          </form>
+        </article>
+        <div class="info-strip orange-strip"><strong>Stock protection:</strong> The system will reject a usage entry when the requested quantity is greater than the available stock.</div>
+      </section>
+      <footer>BuildStock Construction Material Management <span>•</span> Inventory &amp; Site Operations</footer>
+    </main>
+  </div>
+</div>
+<div id="message" role="status"></div>
+<script src="app.js"></script>
+</body></html>
